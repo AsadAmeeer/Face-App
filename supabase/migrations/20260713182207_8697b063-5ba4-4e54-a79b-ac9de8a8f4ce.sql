@@ -1,0 +1,2 @@
+CREATE POLICY "users update own roles" ON public.user_roles FOR UPDATE TO authenticated USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+CREATE POLICY "users delete own roles" ON public.user_roles FOR DELETE TO authenticated USING (auth.uid() = user_id);
