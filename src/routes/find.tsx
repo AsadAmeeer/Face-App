@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { lookupEventByCode } from "@/lib/events.functions";
 import { createSelfieUploadUrl, runSearch } from "@/lib/search.functions";
+import { compressImage } from "@/lib/image-compress";
 import { useAuth } from "@/hooks/use-auth";
 import { UploadCloud, Search, Download, ScanFace, Sparkles, ArrowRight } from "lucide-react";
 
@@ -57,11 +58,11 @@ function FindPage() {
     if (!user) { nav({ to: "/auth", search: { mode: "signup" } }); return; }
     if (!eventInfo) return;
     if (!file.type.startsWith("image/")) { toast.error("Please upload an image"); return; }
-    if (file.size > 10 * 1024 * 1024) { toast.error("Max 10MB"); return; }
     setLoading(true);
     try {
-      const { path, signedUrl } = await getSelfieUpload({ data: { filename: file.name, content_type: file.type } });
-      const put = await fetch(signedUrl, { method: "PUT", headers: { "Content-Type": file.type }, body: file });
+      const compressedFile = await compressImage(file, { maxWidth: 1024, maxHeight: 1024, quality: 0.85 });
+      const { path, signedUrl } = await getSelfieUpload({ data: { filename: compressedFile.name, content_type: compressedFile.type } });
+      const put = await fetch(signedUrl, { method: "PUT", headers: { "Content-Type": compressedFile.type }, body: compressedFile });
       if (!put.ok) throw new Error("Selfie upload failed");
       const res = await runFn({ data: { share_code: eventInfo.share_code, selfie_path: path } });
       setResults({ matches: res.matches, total_scanned: res.total_scanned });
@@ -146,7 +147,7 @@ function FindPage() {
                     <>
                       <UploadCloud className="h-10 w-10 text-muted-foreground" />
                       <p className="mt-3 font-semibold">Click or drop your selfie here</p>
-                      <p className="mt-1 text-xs text-muted-foreground">A clear photo of your face works best · max 10MB</p>
+                      <p className="mt-1 text-xs text-muted-foreground">A clear photo of your face works best · auto-optimized</p>
                     </>
                   )}
                 </div>

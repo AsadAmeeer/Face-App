@@ -44,7 +44,49 @@ async function compareOne(
   return res;
 }
 
+async function fetchFacePP(url: string, params: URLSearchParams, retries = 3, delay = 1000): Promise<any> {
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      const res = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: params.toString(),
+      });
+
+      if (!res.ok) {
+        const text = await res.text();
+        if (res.status === 403 || res.status === 429) {
+          console.warn(`[Face++] Rate limited (status ${res.status}), retrying in ${delay}ms... (attempt ${attempt}/${retries})`);
+          await new Promise((resolve) => setTimeout(resolve, delay));
+          delay *= 2;
+          continue;
+        }
+        throw new Error(`Face++ API error ${res.status}: ${text}`);
+      }
+
+      const data = await res.json();
+      if (data.error_message) {
+        if (data.error_message.includes("CONCURRENCY_LIMIT_EXCEEDED") || data.error_message.includes("RATE_LIMIT")) {
+          console.warn(`[Face++] Concurrency limit exceeded, retrying in ${delay}ms... (attempt ${attempt}/${retries})`);
+          await new Promise((resolve) => setTimeout(resolve, delay));
+          delay *= 2;
+          continue;
+        }
+        throw new Error(`Face++ error: ${data.error_message}`);
+      }
+
+      return data;
+    } catch (err) {
+      if (attempt === retries) throw err;
+      console.warn(`[Face++] Request failed: ${err instanceof Error ? err.message : err}. Retrying in ${delay}ms...`);
+      await new Promise((resolve) => setTimeout(resolve, delay));
+      delay *= 2;
+    }
+  }
+}
+
 async function compareOneWithFacePP(
+  selfieFaceToken: string | null,
   selfieUrl: string,
   photoUrl: string,
   apiKey: string,
@@ -53,43 +95,76 @@ async function compareOneWithFacePP(
 ): Promise<SingleResult> {
   const start = Date.now();
   try {
+    if (selfieFaceToken) {
+      const detectUrl = apiUrl.replace("/compare", "/detect");
+      const detectParams = new URLSearchParams();
+      detectParams.append("api_key", apiKey);
+      detectParams.append("api_secret", apiSecret);
+      detectParams.append("image_url", photoUrl);
+      
+      const detectData = await fetchFacePP(detectUrl, detectParams);
+      const faces = detectData.faces || [];
+      
+      if (faces.length === 0) {
+        console.log(`[FaceMatch Face++] No faces detected in photo in ${Date.now() - start}ms.`);
+        return { match: false, confidence: 0, reason: "No faces detected in the event photo" };
+      }
+
+      console.log(`[FaceMatch Face++] Detected ${faces.length} faces in photo. Comparing each with selfie...`);
+
+      let highestConfidence = 0;
+      let isAnyMatch = false;
+      let matchedReason = "";
+
+      for (const face of faces) {
+        const compareParams = new URLSearchParams();
+        compareParams.append("api_key", apiKey);
+        compareParams.append("api_secret", apiSecret);
+        compareParams.append("face_token1", selfieFaceToken);
+        compareParams.append("face_token2", face.face_token);
+
+        const compareData = await fetchFacePP(apiUrl, compareParams);
+        const confidence = Number(compareData.confidence) || 0;
+        const strictThreshold = compareData.thresholds?.["1e-5"] || 75;
+        const match = confidence >= strictThreshold;
+
+        if (confidence > highestConfidence) {
+          highestConfidence = confidence;
+        }
+
+        if (match) {
+          isAnyMatch = true;
+          matchedReason = `Biometric match confirmed by Face++ (confidence: ${confidence}%, threshold: ${strictThreshold})`;
+          break; // Found a match, skip rest
+        }
+      }
+
+      console.log(`[FaceMatch Face++] Comparison done in ${Date.now() - start}ms. Best Confidence: ${highestConfidence}%, Match: ${isAnyMatch}`);
+      return {
+        match: isAnyMatch,
+        confidence: highestConfidence,
+        reason: isAnyMatch ? matchedReason : "No matching biometric face found in the photo",
+      };
+    }
+
+    // Fallback: Default URL-based comparison
+    console.log(`[FaceMatch Face++] Falling back to default URL-based comparison...`);
     const params = new URLSearchParams();
     params.append("api_key", apiKey);
     params.append("api_secret", apiSecret);
     params.append("image_url1", selfieUrl);
     params.append("image_url2", photoUrl);
 
-    const res = await fetch(apiUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: params.toString(),
-    });
-
-    if (!res.ok) {
-      const text = await res.text();
-      throw new Error(`Face++ API error ${res.status}: ${text}`);
-    }
-
-    const data = await res.json();
-    if (data.error_message) {
-      throw new Error(`Face++ error: ${data.error_message}`);
-    }
-
-    const confidence = Number(data.confidence) || 0;
-    
-    // For Face++, the 'thresholds' define rates of false acceptance.
-    // '1e-5' threshold is very strict (1 in 100,000 false matches).
-    const strictThreshold = data.thresholds?.["1e-5"] || 75;
+    const compareData = await fetchFacePP(apiUrl, params);
+    const confidence = Number(compareData.confidence) || 0;
+    const strictThreshold = compareData.thresholds?.["1e-5"] || 75;
     const match = confidence >= strictThreshold;
 
-    console.log(`[FaceMatch Face++] Verified photo in ${Date.now() - start}ms - Match: ${match}, Confidence: ${confidence}% (Threshold: ${strictThreshold})`);
-    
+    console.log(`[FaceMatch Face++] Default comparison done in ${Date.now() - start}ms - Match: ${match}, Confidence: ${confidence}%`);
     return {
       match,
       confidence,
-      reason: match ? "Biometric match confirmed by Face++" : "No biometric match found",
+      reason: match ? "Biometric match confirmed by Face++ (default)" : "No biometric match found",
     };
   } catch (err) {
     console.error(`[FaceMatch Face++] Failed for photo:`, err);
@@ -166,16 +241,43 @@ export async function matchSelfieAgainstPhotos(
   if (photos.length === 0) return [];
 
   const results: Array<{ photo_id: string; confidence: number }> = [];
-  const CONCURRENCY = isFacePP ? 12 : 8;
+  const CONCURRENCY = isFacePP ? 3 : 8;
   const totalStart = Date.now();
-  console.log(`[FaceMatch] Starting face match search using ${isFacePP ? "Face++" : "Gemini 2.5 Flash"} for ${photos.length} photos with concurrency limit of ${CONCURRENCY}...`);
+  console.log(`[FaceMatch] Starting face match search using ${isFacePP ? "Face++ (Multi-Face)" : "Gemini 2.5 Flash"} for ${photos.length} photos with concurrency limit of ${CONCURRENCY}...`);
+
+  let selfieFaceToken: string | null = null;
+  if (isFacePP) {
+    try {
+      console.log("[FaceMatch] Detecting face in selfie...");
+      const detectUrl = faceppUrl.replace("/compare", "/detect");
+      const detectParams = new URLSearchParams();
+      detectParams.append("api_key", faceppKey!);
+      detectParams.append("api_secret", faceppSecret!);
+      detectParams.append("image_url", selfieUrl);
+      
+      const detectData = await fetchFacePP(detectUrl, detectParams);
+      if (detectData.faces && detectData.faces.length > 0) {
+        const sortedFaces = detectData.faces.sort((a: any, b: any) => {
+          const areaA = a.face_rectangle.width * a.face_rectangle.height;
+          const areaB = b.face_rectangle.width * b.face_rectangle.height;
+          return areaB - areaA;
+        });
+        selfieFaceToken = sortedFaces[0].face_token;
+        console.log(`[FaceMatch] Selfie face token obtained: ${selfieFaceToken}`);
+      } else {
+        console.warn("[FaceMatch] No faces detected in selfie. URL fallback will be used.");
+      }
+    } catch (err) {
+      console.error("[FaceMatch] Failed to detect face in selfie:", err);
+    }
+  }
 
   for (let i = 0; i < photos.length; i += CONCURRENCY) {
     const chunk = photos.slice(i, i + CONCURRENCY);
     const settled = await Promise.allSettled(
       chunk.map((p) => {
         if (isFacePP) {
-          return compareOneWithFacePP(selfieUrl, p.photo_url, faceppKey!, faceppSecret!, faceppUrl);
+          return compareOneWithFacePP(selfieFaceToken, selfieUrl, p.photo_url, faceppKey!, faceppSecret!, faceppUrl);
         } else {
           return compareOne(selfieUrl, p.photo_url, lovableApiKey!);
         }

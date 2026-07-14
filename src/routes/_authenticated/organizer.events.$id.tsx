@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { SiteHeader } from "@/components/site-header";
 import { getMyEvent, deleteEvent } from "@/lib/events.functions";
 import { createPhotoUploadUrl, registerPhoto, deletePhoto } from "@/lib/photos.functions";
+import { compressImage, runWithConcurrency } from "@/lib/image-compress";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Copy, ImagePlus, Trash2, ImageIcon, Share2 } from "lucide-react";
 
@@ -35,24 +36,46 @@ function EventDetail() {
   const uploadFiles = async (files: FileList) => {
     if (!files.length) return;
     setUploading(true);
-    setProgress({ done: 0, total: files.length });
-    let done = 0;
-    for (const file of Array.from(files)) {
-      if (!file.type.startsWith("image/")) { toast.error(`${file.name}: not an image`); continue; }
-      if (file.size > 10 * 1024 * 1024) { toast.error(`${file.name}: max 10MB`); continue; }
+    const fileArray = Array.from(files);
+    setProgress({ done: 0, total: fileArray.length });
+    
+    let uploadedCount = 0;
+
+    const uploadSingleFile = async (file: File) => {
+      if (!file.type.startsWith("image/")) {
+        toast.error(`${file.name}: not an image`);
+        setProgress((prev) => ({ ...prev, done: prev.done + 1 }));
+        return;
+      }
+
       try {
-        const { path, signedUrl } = await getUpload({ data: { event_id: id, filename: file.name, content_type: file.type } });
-        const put = await fetch(signedUrl, { method: "PUT", headers: { "Content-Type": file.type }, body: file });
+        const compressedFile = await compressImage(file, { maxWidth: 2048, maxHeight: 2048, quality: 0.82 });
+        const { path, signedUrl } = await getUpload({
+          data: {
+            event_id: id,
+            filename: compressedFile.name,
+            content_type: compressedFile.type,
+          },
+        });
+        const put = await fetch(signedUrl, {
+          method: "PUT",
+          headers: { "Content-Type": compressedFile.type },
+          body: compressedFile,
+        });
         if (!put.ok) throw new Error(await put.text());
         await register({ data: { event_id: id, path } });
+        uploadedCount++;
       } catch (err) {
         toast.error(`${file.name}: ${err instanceof Error ? err.message : "upload failed"}`);
+      } finally {
+        setProgress((prev) => ({ ...prev, done: prev.done + 1 }));
       }
-      done++;
-      setProgress({ done, total: files.length });
-    }
+    };
+
+    await runWithConcurrency(4, fileArray, uploadSingleFile);
+
     setUploading(false);
-    toast.success(`Uploaded ${done} photo${done === 1 ? "" : "s"}`);
+    toast.success(`Uploaded ${uploadedCount} photo${uploadedCount === 1 ? "" : "s"}`);
     qc.invalidateQueries({ queryKey: ["event", id] });
   };
 
@@ -137,7 +160,7 @@ function EventDetail() {
             >
               <ImageIcon className="h-10 w-10 text-muted-foreground" />
               <p className="mt-3 font-semibold">Drop photos here or click to browse</p>
-              <p className="mt-1 text-xs text-muted-foreground">JPG or PNG, up to 10MB each</p>
+              <p className="mt-1 text-xs text-muted-foreground">JPG or PNG · Any size, auto-optimized</p>
             </div>
           ) : (
             <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">

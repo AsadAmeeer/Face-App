@@ -117,7 +117,10 @@ export const lookupEventByCode = createServerFn({ method: "POST" })
 console.log("EVENT:", event);
 console.log("ERROR:", error);
 
-if (error) {
-  console.error("FULL ERROR:", JSON.stringify(error, null, 2));
-  throw new Error(error.message);
-}
+    if (error) {
+      console.error("FULL ERROR:", JSON.stringify(error, null, 2));
+      throw new Error(error.message);
+    }
+    if (!event) throw new Error("Event not found");
+    return event;
+  });
