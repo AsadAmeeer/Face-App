@@ -1,9 +1,12 @@
 
 -- ============ ENUMS ============
-CREATE TYPE public.app_role AS ENUM ('admin', 'organizer', 'attendee');
+DO $$ BEGIN
+  CREATE TYPE public.app_role AS ENUM ('admin', 'organizer', 'attendee');
+EXCEPTION WHEN duplicate_object THEN null;
+END $$;
 
 -- ============ PROFILES ============
-CREATE TABLE public.profiles (
+CREATE TABLE IF NOT EXISTS public.profiles (
   id UUID PRIMARY KEY REFERENCES auth.users ON DELETE CASCADE,
   full_name TEXT,
   avatar_url TEXT,
