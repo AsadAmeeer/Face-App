@@ -88,7 +88,7 @@ function AuthPage() {
                 <Label htmlFor="name">Full name</Label>
                 <div className="relative">
                   <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                  <Input id="name" required minLength={2} className="pl-9" value={name} onChange={(e) => setName(e.target.value)} />
+                  <Input id="name" required className="pl-9" value={name} onChange={(e) => setName(e.target.value)} />
                 </div>
               </div>
             )}
@@ -103,7 +103,7 @@ function AuthPage() {
               <Label htmlFor="password">Password</Label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                <Input id="password" type="password" required minLength={6} className="pl-9" value={password} onChange={(e) => setPassword(e.target.value)} />
+                <Input id="password" type="password" required className="pl-9" value={password} onChange={(e) => setPassword(e.target.value)} />
               </div>
             </div>
             <Button type="submit" disabled={loading} className="w-full bg-gradient-hero text-primary-foreground shadow-soft hover:opacity-95">

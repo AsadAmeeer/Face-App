@@ -55,7 +55,6 @@ function FindPage() {
   };
 
   const submitSelfie = async (file: File) => {
-    if (!user) { nav({ to: "/auth", search: { mode: "signup" } }); return; }
     if (!eventInfo) return;
     if (!file.type.startsWith("image/")) { toast.error("Please upload an image"); return; }
     setLoading(true);
@@ -121,15 +120,16 @@ function FindPage() {
             <h1 className="mt-4 text-3xl font-black">Upload your selfie</h1>
             <p className="mt-1 text-sm text-muted-foreground">Searching in <b>{eventInfo.name}</b> · code <span className="font-mono">{eventInfo.share_code}</span></p>
 
-            {authLoading ? null : !user ? (
-              <div className="mt-6 rounded-xl border border-primary/30 bg-primary-soft p-4 text-sm">
-                <p>Sign in to run the face search — it keeps your matches private and lets you come back to them.</p>
-                <Button asChild className="mt-3 bg-gradient-hero text-primary-foreground shadow-soft hover:opacity-95">
-                  <Link to="/auth" search={{ mode: "signup" }}>Sign in to search</Link>
-                </Button>
-              </div>
-            ) : (
+            {authLoading ? null : (
               <>
+                {!user && (
+                  <div className="mt-6 rounded-xl border border-border bg-muted/20 p-4 text-sm flex items-center justify-between gap-4">
+                    <p className="text-muted-foreground">Searching as guest. Sign in to save your search history.</p>
+                    <Button asChild size="sm" variant="outline">
+                      <Link to="/auth" search={{ mode: "signup" }}>Sign in</Link>
+                    </Button>
+                  </div>
+                )}
                 <input ref={fileRef} type="file" accept="image/*" hidden onChange={(e) => e.target.files?.[0] && submitSelfie(e.target.files[0])} />
                 <div
                   className="mt-6 grid cursor-pointer place-items-center rounded-xl border-2 border-dashed border-border bg-muted/30 p-10 text-center hover:bg-muted/50"

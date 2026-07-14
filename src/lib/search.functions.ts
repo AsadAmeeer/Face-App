@@ -1,10 +1,10 @@
 import { createServerFn } from "@tanstack/react-start";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { requireSupabaseAuth, optionalSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 
-// Selfie upload URL (attendee scope: uid/<uuid>)
+// Selfie upload URL (attendee scope: uid/<uuid> or anonymous/<uuid>)
 export const createSelfieUploadUrl = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([optionalSupabaseAuth])
   .inputValidator((d: unknown) =>
     z.object({
       filename: z.string().min(1).max(200),
@@ -14,7 +14,7 @@ export const createSelfieUploadUrl = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
     const safe = data.filename.replace(/[^a-zA-Z0-9._-]/g, "_");
-    const path = `${userId}/${crypto.randomUUID()}-${safe}`;
+    const path = userId ? `${userId}/${crypto.randomUUID()}-${safe}` : `anonymous/${crypto.randomUUID()}-${safe}`;
     const { data: signed, error } = await supabase.storage.from("selfies").createSignedUploadUrl(path);
     if (error) throw new Error(error.message);
     return { path, signedUrl: signed.signedUrl };
@@ -22,7 +22,7 @@ export const createSelfieUploadUrl = createServerFn({ method: "POST" })
 
 // Run search: find event by share_code, batch-compare selfie against event photos with Gemini.
 export const runSearch = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
+  .middleware([optionalSupabaseAuth])
   .inputValidator((d: unknown) =>
     z.object({
       share_code: z.string().trim().min(4).max(16),
