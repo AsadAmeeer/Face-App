@@ -37,19 +37,19 @@ function Landing() {
         <div className="relative mx-auto grid w-full max-w-7xl items-center gap-8 px-4 py-6 sm:px-6 lg:grid-cols-2">
           {/* LEFT: copy */}
           <div>
-            <div className="inline-flex items-center gap-2 rounded-full border border-primary/25 bg-card/80 px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-primary shadow-soft">
+            <div className="hero-badge inline-flex items-center gap-2 rounded-full border border-primary/25 bg-card/80 px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-primary shadow-soft">
               <Sparkles className="h-3.5 w-3.5" /> AI Powered Photo Discovery
             </div>
-            <h1 className="mt-4 text-4xl font-black leading-[1.02] tracking-tight text-foreground sm:text-5xl lg:text-6xl">
+            <h1 className="hero-heading mt-4 text-4xl font-black leading-[1.02] tracking-tight text-foreground sm:text-5xl lg:text-6xl">
               Find Your <br />
               Moments. <br />
               <span className="bg-gradient-hero bg-clip-text text-transparent">From Every Event.</span>
             </h1>
-            <p className="mt-3 max-w-lg text-base text-muted-foreground">
+            <p className="hero-sub mt-3 max-w-lg text-base text-muted-foreground">
               Upload a selfie and instantly discover all the photos where you appear.
               Powered by advanced AI face recognition.
             </p>
-            <div className="mt-5 flex flex-wrap gap-3">
+            <div className="hero-cta mt-5 flex flex-wrap gap-3">
               <Button asChild size="lg" className="bg-primary text-primary-foreground shadow-soft hover:bg-primary/90">
                 <Link to="/find">
                   <UploadCloud className="mr-2 h-4 w-4" /> Find My Photos
@@ -61,7 +61,7 @@ function Landing() {
                 </Link>
               </Button>
             </div>
-            <div className="mt-5 flex flex-wrap gap-x-8 gap-y-3 text-sm">
+            <div className="hero-trust mt-5 flex flex-wrap gap-x-8 gap-y-3 text-sm">
               <TrustPill icon={<ShieldCheck className="h-4 w-4" />} title="100% Secure" subtitle="Your data is private" tone="primary" />
               <TrustPill icon={<Zap className="h-4 w-4" />} title="Lightning Fast" subtitle="Results in seconds" tone="success" />
               <TrustPill icon={<Target className="h-4 w-4" />} title="Highly Accurate" subtitle="Advanced AI technology" tone="success" />
@@ -71,9 +71,9 @@ function Landing() {
           {/* RIGHT: collage */}
           <div className="relative mx-auto aspect-square w-full max-w-[480px]">
             {/* Big center circular portrait with face-detection frame */}
-            <div className="absolute left-1/2 top-1/2 aspect-square w-[62%] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-full border-[6px] border-white shadow-2xl ring-4 ring-primary/20">
+            <div className="hero-portrait absolute left-1/2 top-1/2 aspect-square w-[62%] overflow-hidden rounded-full border-[6px] border-white shadow-2xl ring-4 ring-primary/20">
               <img src={heroPortrait} alt="Smiling attendee portrait" className="h-full w-full object-cover" />
-              <div className="absolute left-1/2 top-1/2 h-[42%] w-[42%] -translate-x-1/2 -translate-y-[45%] rounded-md border-[3px] border-primary shadow-[0_0_0_2px_rgba(255,255,255,0.4)]">
+              <div className="hero-scanbox absolute left-1/2 top-1/2 h-[42%] w-[42%] -translate-x-1/2 -translate-y-[45%] rounded-md border-[3px] border-primary">
                 <span className="absolute -top-[3px] -left-[3px] h-3 w-3 border-t-[3px] border-l-[3px] border-primary" />
                 <span className="absolute -top-[3px] -right-[3px] h-3 w-3 border-t-[3px] border-r-[3px] border-primary" />
                 <span className="absolute -bottom-[3px] -left-[3px] h-3 w-3 border-b-[3px] border-l-[3px] border-primary" />
@@ -81,26 +81,26 @@ function Landing() {
               </div>
             </div>
 
-            {/* Corner event tiles */}
+            {/* Corner event tiles — each floats independently */}
             {[
-              { src: heroTile1, alt: "Group of friends at an evening party", cls: "top-[2%] left-[-4%] w-[38%] -rotate-[8deg]" },
-              { src: heroTile2, alt: "Two friends laughing with confetti", cls: "top-[6%] right-[-6%] w-[36%] rotate-[7deg]" },
-              { src: heroTile3, alt: "Concert crowd with stage lights", cls: "bottom-[10%] left-[-6%] w-[34%] rotate-[6deg]" },
-              { src: heroTile4, alt: "Friends celebrating outdoors", cls: "bottom-[2%] right-[-4%] w-[40%] -rotate-[6deg]" },
+              { src: heroTile1, alt: "Group of friends at an evening party", cls: "top-[2%] left-[-4%] w-[38%]" },
+              { src: heroTile2, alt: "Two friends laughing with confetti",   cls: "top-[6%] right-[-6%] w-[36%]" },
+              { src: heroTile3, alt: "Concert crowd with stage lights",       cls: "bottom-[10%] left-[-6%] w-[34%]" },
+              { src: heroTile4, alt: "Friends celebrating outdoors",           cls: "bottom-[2%] right-[-4%] w-[40%]" },
             ].map((t, i) => (
               <div
                 key={i}
-                className={`absolute overflow-hidden rounded-xl border-[5px] border-white bg-white shadow-2xl ${t.cls}`}
+                className={`hero-tile-${i} absolute overflow-hidden rounded-xl border-[5px] border-white bg-white shadow-2xl ${t.cls}`}
                 style={{ aspectRatio: "4 / 3" }}
               >
-                <img src={t.src} alt={t.alt} loading="lazy" className="h-full w-full object-cover" />
+                <img src={t.src} alt={t.alt} loading="lazy" className="h-full w-full object-cover transition-transform duration-700 hover:scale-110" />
               </div>
             ))}
 
             {/* Upload selfie pill button */}
             <Link
               to="/find"
-              className="group absolute left-1/2 bottom-[6%] flex -translate-x-1/2 flex-col items-center gap-2"
+              className="hero-upload-pill group absolute left-1/2 bottom-[6%] flex flex-col items-center gap-2"
             >
               <div className="grid h-14 w-14 place-items-center rounded-full bg-gradient-hero text-white shadow-glow transition-transform group-hover:scale-105">
                 <UploadCloud className="h-6 w-6" />
@@ -112,7 +112,7 @@ function Landing() {
             </Link>
 
             {/* Floating stats card */}
-            <div className="absolute -bottom-6 -right-4 hidden w-64 rounded-2xl border border-border bg-card p-4 shadow-glow sm:block">
+            <div className="hero-stats absolute -bottom-6 -right-4 hidden w-64 rounded-2xl border border-border bg-card p-4 shadow-glow sm:block">
               <div className="flex items-center gap-3">
                 <div className="grid h-10 w-10 place-items-center rounded-lg bg-primary-soft text-primary">
                   <ImageIcon className="h-4 w-4" />
