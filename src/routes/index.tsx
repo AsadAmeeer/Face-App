@@ -70,8 +70,10 @@ function Landing() {
 
           {/* RIGHT: collage */}
           <div className="relative mx-auto aspect-square w-full max-w-[480px]">
+            {/* Warm radial glow behind collage */}
+            <div className="pointer-events-none absolute inset-[-15%] rounded-full bg-[radial-gradient(circle,oklch(0.68_0.19_40/0.12)_0%,transparent_70%)]" />
             {/* Big center circular portrait with face-detection frame */}
-            <div className="hero-portrait absolute left-1/2 top-1/2 aspect-square w-[62%] overflow-hidden rounded-full border-[6px] border-white shadow-2xl ring-4 ring-primary/20">
+            <div className="hero-portrait absolute left-1/2 top-1/2 aspect-square w-[62%] overflow-hidden rounded-full border-[7px] border-white ring-[6px] ring-primary/25" style={{ boxShadow: '0 20px 60px -10px oklch(0.68 0.19 40 / 0.35), 0 8px 24px -4px rgba(0,0,0,0.15)' }}>
               <img src={heroPortrait} alt="Smiling attendee portrait" className="h-full w-full object-cover" />
               <div className="hero-scanbox absolute left-1/2 top-1/2 h-[42%] w-[42%] -translate-x-1/2 -translate-y-[45%] rounded-md border-[3px] border-primary">
                 <span className="absolute -top-[3px] -left-[3px] h-3 w-3 border-t-[3px] border-l-[3px] border-primary" />
@@ -90,8 +92,8 @@ function Landing() {
             ].map((t, i) => (
               <div
                 key={i}
-                className={`hero-tile-${i} absolute overflow-hidden rounded-xl border-[5px] border-white bg-white shadow-2xl ${t.cls}`}
-                style={{ aspectRatio: "4 / 3" }}
+                className={`hero-tile-${i} absolute overflow-hidden rounded-xl border-[5px] border-white bg-white ${t.cls}`}
+                style={{ aspectRatio: "4 / 3", boxShadow: '0 12px 40px -8px rgba(0,0,0,0.22), 0 4px 12px -2px oklch(0.68 0.19 40 / 0.15)' }}
               >
                 <img src={t.src} alt={t.alt} loading="lazy" className="h-full w-full object-cover transition-transform duration-700 hover:scale-110" />
               </div>
@@ -112,7 +114,7 @@ function Landing() {
             </Link>
 
             {/* Floating stats card */}
-            <div className="hero-stats absolute -bottom-6 -right-4 hidden w-64 rounded-2xl border border-border bg-card p-4 shadow-glow sm:block">
+            <div className="hero-stats absolute -bottom-6 -right-4 hidden w-64 rounded-2xl border border-border/60 bg-card/95 p-4 backdrop-blur-md sm:block" style={{ boxShadow: '0 20px 60px -15px oklch(0.68 0.19 40 / 0.30), 0 8px 20px -6px rgba(0,0,0,0.08)' }}>
               <div className="flex items-center gap-3">
                 <div className="grid h-10 w-10 place-items-center rounded-lg bg-primary-soft text-primary">
                   <ImageIcon className="h-4 w-4" />
