@@ -57,7 +57,7 @@ function Landing() {
               </Button>
               <Button asChild size="lg" variant="outline" className="border-primary/30 bg-card text-primary hover:bg-primary-soft">
                 <Link to="/auth" search={{ mode: "signup" }}>
-                  <Calendar className="mr-2 h-4 w-4" /> For Event Organizers
+                  <Calendar className="mr-2 h-4 w-4" /> SignUp For Organize an Event
                 </Link>
               </Button>
             </div>
@@ -84,9 +84,9 @@ function Landing() {
             {/* Corner event tiles */}
             {[
               { src: heroTile1, alt: "Group of friends at an evening party", cls: "top-[2%] left-[-4%] w-[38%] -rotate-[8deg]" },
-              { src: heroTile2, alt: "Two friends laughing with confetti",  cls: "top-[6%] right-[-6%] w-[36%] rotate-[7deg]" },
-              { src: heroTile3, alt: "Concert crowd with stage lights",      cls: "bottom-[10%] left-[-6%] w-[34%] rotate-[6deg]" },
-              { src: heroTile4, alt: "Friends celebrating outdoors",         cls: "bottom-[2%] right-[-4%] w-[40%] -rotate-[6deg]" },
+              { src: heroTile2, alt: "Two friends laughing with confetti", cls: "top-[6%] right-[-6%] w-[36%] rotate-[7deg]" },
+              { src: heroTile3, alt: "Concert crowd with stage lights", cls: "bottom-[10%] left-[-6%] w-[34%] rotate-[6deg]" },
+              { src: heroTile4, alt: "Friends celebrating outdoors", cls: "bottom-[2%] right-[-4%] w-[40%] -rotate-[6deg]" },
             ].map((t, i) => (
               <div
                 key={i}
