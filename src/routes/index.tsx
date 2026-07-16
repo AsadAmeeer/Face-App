@@ -71,9 +71,9 @@ function Landing() {
           {/* RIGHT: collage */}
           <div className="relative mx-auto aspect-square w-full max-w-[480px]">
             {/* Warm radial glow behind collage */}
-            <div className="pointer-events-none absolute inset-[-15%] rounded-full bg-[radial-gradient(circle,oklch(0.68_0.19_40/0.12)_0%,transparent_70%)]" />
+            <div className="pointer-events-none absolute inset-[-20%] rounded-full bg-[radial-gradient(circle,oklch(0.68_0.19_40/0.08)_0%,oklch(0.68_0.19_40/0.04)_40%,transparent_70%)]" />
             {/* Big center circular portrait with face-detection frame */}
-            <div className="hero-portrait absolute left-1/2 top-1/2 aspect-square w-[62%] overflow-hidden rounded-full border-[7px] border-white ring-[6px] ring-primary/25" style={{ boxShadow: '0 20px 60px -10px oklch(0.68 0.19 40 / 0.35), 0 8px 24px -4px rgba(0,0,0,0.15)' }}>
+            <div className="hero-portrait absolute left-1/2 top-1/2 z-10 aspect-square w-[58%] overflow-hidden rounded-full border-[6px] border-white/90" style={{ boxShadow: '0 8px 50px 0px oklch(0.68 0.19 40 / 0.18), 0 0 80px 10px oklch(0.68 0.19 40 / 0.08)' }}>
               <img src={heroPortrait} alt="Smiling attendee portrait" className="h-full w-full object-cover" />
               <div className="hero-scanbox absolute left-1/2 top-1/2 h-[42%] w-[42%] -translate-x-1/2 -translate-y-[45%] rounded-md border-[3px] border-primary">
                 <span className="absolute -top-[3px] -left-[3px] h-3 w-3 border-t-[3px] border-l-[3px] border-primary" />
@@ -83,17 +83,17 @@ function Landing() {
               </div>
             </div>
 
-            {/* Corner event tiles — each floats independently */}
+            {/* Corner event tiles — overlapping the circle edges like the reference */}
             {[
-              { src: heroTile1, alt: "Group of friends at an evening party", cls: "top-[2%] left-[-4%] w-[38%]" },
-              { src: heroTile2, alt: "Two friends laughing with confetti",   cls: "top-[6%] right-[-6%] w-[36%]" },
-              { src: heroTile3, alt: "Concert crowd with stage lights",       cls: "bottom-[10%] left-[-6%] w-[34%]" },
-              { src: heroTile4, alt: "Friends celebrating outdoors",           cls: "bottom-[2%] right-[-4%] w-[40%]" },
+              { src: heroTile1, alt: "Group of friends at an evening party", cls: "top-[4%] left-[2%] w-[34%] z-20" },
+              { src: heroTile2, alt: "Two friends laughing with confetti",   cls: "top-[2%] right-[0%] w-[32%] z-20" },
+              { src: heroTile3, alt: "Concert crowd with stage lights",       cls: "bottom-[14%] left-[0%] w-[32%] z-20" },
+              { src: heroTile4, alt: "Friends celebrating outdoors",           cls: "bottom-[8%] right-[2%] w-[34%] z-20" },
             ].map((t, i) => (
               <div
                 key={i}
-                className={`hero-tile-${i} absolute overflow-hidden rounded-xl border-[5px] border-white bg-white ${t.cls}`}
-                style={{ aspectRatio: "4 / 3", boxShadow: '0 12px 40px -8px rgba(0,0,0,0.22), 0 4px 12px -2px oklch(0.68 0.19 40 / 0.15)' }}
+                className={`hero-tile-${i} absolute overflow-hidden rounded-2xl border-[4px] border-white bg-white ${t.cls}`}
+                style={{ aspectRatio: "4 / 3", boxShadow: '0 8px 30px -6px rgba(0,0,0,0.18), 0 2px 8px -2px rgba(0,0,0,0.08)' }}
               >
                 <img src={t.src} alt={t.alt} loading="lazy" className="h-full w-full object-cover transition-transform duration-700 hover:scale-110" />
               </div>
@@ -102,7 +102,7 @@ function Landing() {
             {/* Upload selfie pill button */}
             <Link
               to="/find"
-              className="hero-upload-pill group absolute left-1/2 bottom-[6%] flex flex-col items-center gap-2"
+              className="hero-upload-pill group absolute left-1/2 bottom-[6%] z-30 flex flex-col items-center gap-2"
             >
               <div className="grid h-14 w-14 place-items-center rounded-full bg-gradient-hero text-white shadow-glow transition-transform group-hover:scale-105">
                 <UploadCloud className="h-6 w-6" />
@@ -114,7 +114,7 @@ function Landing() {
             </Link>
 
             {/* Floating stats card */}
-            <div className="hero-stats absolute -bottom-6 -right-4 hidden w-64 rounded-2xl border border-border/60 bg-card/95 p-4 backdrop-blur-md sm:block" style={{ boxShadow: '0 20px 60px -15px oklch(0.68 0.19 40 / 0.30), 0 8px 20px -6px rgba(0,0,0,0.08)' }}>
+            <div className="hero-stats absolute -bottom-4 -right-2 z-30 hidden w-60 rounded-2xl border border-border/50 bg-white/95 p-4 backdrop-blur-md sm:block" style={{ boxShadow: '0 12px 40px -10px rgba(0,0,0,0.12), 0 4px 16px -4px rgba(0,0,0,0.06)' }}>
               <div className="flex items-center gap-3">
                 <div className="grid h-10 w-10 place-items-center rounded-lg bg-primary-soft text-primary">
                   <ImageIcon className="h-4 w-4" />
