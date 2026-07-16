@@ -108,19 +108,20 @@ export const lookupEventByCode = createServerFn({ method: "POST" })
     const supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_PUBLISHABLE_KEY!, {
       auth: { persistSession: false, autoRefreshToken: false, storage: undefined },
     });
-   const { data: event, error } = await supabase
-  .from("events")
-  .select("id, name, description, event_date, location, share_code, cover_url")
-  .eq("share_code", data.code.trim().toUpperCase())
-  .maybeSingle();
+    const { data: event, error } = await supabase
+      .from("events")
+      .select("id, name, description, event_date, location, share_code, cover_url")
+      .eq("share_code", data.code.trim().toUpperCase())
+      .maybeSingle();
 
-console.log("EVENT:", event);
-console.log("ERROR:", error);
-
-    if (error) {
-      console.error("FULL ERROR:", JSON.stringify(error, null, 2));
-      throw new Error(error.message);
-    }
+    if (error) throw new Error(error.message);
     if (!event) throw new Error("Event not found");
-    return event;
+
+    // Count how many photos are in this event
+    const { count } = await supabase
+      .from("event_photos")
+      .select("id", { count: "exact", head: true })
+      .eq("event_id", event.id);
+
+    return { ...event, photo_count: count ?? 0 };
   });

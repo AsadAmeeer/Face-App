@@ -235,3 +235,14 @@
 .hero-stats     { animation: slide-in-right 0.8s cubic-bezier(.22,1,.36,1) 0.8s both; }
 
 .hero-upload-pill { animation: bounce-gentle 3s ease-in-out infinite; }
+
+/* ── Scanning page: sweep line ── */
+@keyframes scan-sweep {
+  0%   { top: 0%; opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
+.scan-line {
+  animation: scan-sweep 1.8s ease-in-out infinite;
+}
