@@ -13,12 +13,6 @@ export function SiteHeader() {
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
 
-  const links = [
-    { to: "/", label: "Home" },
-    { to: "/find", label: "Find Photos" },
-    { to: "/#how", label: "How It Works" },
-    { to: "/#organizers", label: "For Organizers" },
-  ];
 
   const signOut = async () => {
     await qc.cancelQueries();
@@ -39,13 +33,6 @@ export function SiteHeader() {
           />
         </Link>
 
-        <nav className="hidden items-center gap-7 text-sm font-medium text-muted-foreground md:flex">
-          {links.map((l) => (
-            <a key={l.to} href={l.to} className="transition-colors hover:text-foreground">
-              {l.label}
-            </a>
-          ))}
-        </nav>
 
         <div className="flex items-center gap-2">
           {user ? (
