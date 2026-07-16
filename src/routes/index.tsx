@@ -69,12 +69,36 @@ function Landing() {
           </div>
 
           {/* RIGHT: collage */}
-          <div className="relative mx-auto aspect-square w-full max-w-[480px]">
-            {/* Warm radial glow behind collage */}
-            <div className="pointer-events-none absolute inset-[-20%] rounded-full bg-[radial-gradient(circle,oklch(0.68_0.19_40/0.08)_0%,oklch(0.68_0.19_40/0.04)_40%,transparent_70%)]" />
-            {/* Big center circular portrait with face-detection frame */}
-            <div className="hero-portrait absolute left-1/2 top-1/2 z-10 aspect-square w-[58%] overflow-hidden rounded-full border-[6px] border-white/90" style={{ boxShadow: '0 8px 50px 0px oklch(0.68 0.19 40 / 0.18), 0 0 80px 10px oklch(0.68 0.19 40 / 0.08)' }}>
+          <div className="relative mx-auto aspect-square w-full max-w-[500px]">
+
+            {/* ── Warm coral glow BEHIND the circle ── */}
+            <div
+              className="pointer-events-none absolute"
+              style={{
+                left: "50%", top: "50%",
+                transform: "translate(-50%, -50%)",
+                width: "72%", height: "72%",
+                borderRadius: "50%",
+                background: "radial-gradient(circle, oklch(0.85 0.12 50 / 0.55) 0%, oklch(0.90 0.08 45 / 0.25) 45%, transparent 70%)",
+                filter: "blur(18px)",
+                zIndex: 1,
+              }}
+            />
+
+            {/* ── Big center circular portrait ── */}
+            <div
+              className="hero-portrait absolute overflow-hidden rounded-full border-[6px] border-white"
+              style={{
+                left: "50%", top: "50%",
+                transform: "translate(-50%, -50%)",
+                width: "64%",
+                aspectRatio: "1/1",
+                zIndex: 10,
+                boxShadow: "0 4px 32px 0 oklch(0.68 0.19 40 / 0.20), 0 1px 8px 0 rgba(0,0,0,0.10)",
+              }}
+            >
               <img src={heroPortrait} alt="Smiling attendee portrait" className="h-full w-full object-cover" />
+              {/* Face detection box */}
               <div className="hero-scanbox absolute left-1/2 top-1/2 h-[42%] w-[42%] -translate-x-1/2 -translate-y-[45%] rounded-md border-[3px] border-primary">
                 <span className="absolute -top-[3px] -left-[3px] h-3 w-3 border-t-[3px] border-l-[3px] border-primary" />
                 <span className="absolute -top-[3px] -right-[3px] h-3 w-3 border-t-[3px] border-r-[3px] border-primary" />
@@ -82,61 +106,85 @@ function Landing() {
                 <span className="absolute -bottom-[3px] -right-[3px] h-3 w-3 border-b-[3px] border-r-[3px] border-primary" />
               </div>
             </div>
+  
+            {/* ── TOP-LEFT tile ── */}
+            <div
+              className="hero-tile-0 absolute overflow-hidden rounded-2xl border-[4px] border-white bg-white"
+              style={{ top: "3%", left: "2%", width: "35%", aspectRatio: "4/3", zIndex: 20, boxShadow: "0 8px 28px -6px rgba(0,0,0,0.18)" }}
+            >
+              <img src={heroTile1} alt="Group of friends at an evening party" loading="lazy" className="h-full w-full object-cover transition-transform duration-700 hover:scale-110" />
+            </div>
 
-            {/* Corner event tiles — overlapping the circle edges like the reference */}
-            {[
-              { src: heroTile1, alt: "Group of friends at an evening party", cls: "top-[4%] left-[2%] w-[34%] z-20" },
-              { src: heroTile2, alt: "Two friends laughing with confetti",   cls: "top-[2%] right-[0%] w-[32%] z-20" },
-              { src: heroTile3, alt: "Concert crowd with stage lights",       cls: "bottom-[14%] left-[0%] w-[32%] z-20" },
-              { src: heroTile4, alt: "Friends celebrating outdoors",           cls: "bottom-[8%] right-[2%] w-[34%] z-20" },
-            ].map((t, i) => (
-              <div
-                key={i}
-                className={`hero-tile-${i} absolute overflow-hidden rounded-2xl border-[4px] border-white bg-white ${t.cls}`}
-                style={{ aspectRatio: "4 / 3", boxShadow: '0 8px 30px -6px rgba(0,0,0,0.18), 0 2px 8px -2px rgba(0,0,0,0.08)' }}
-              >
-                <img src={t.src} alt={t.alt} loading="lazy" className="h-full w-full object-cover transition-transform duration-700 hover:scale-110" />
-              </div>
-            ))}
+            {/* ── TOP-RIGHT tile ── */}
+            <div
+              className="hero-tile-1 absolute overflow-hidden rounded-2xl border-[4px] border-white bg-white"
+              style={{ top: "2%", right: "0%", width: "33%", aspectRatio: "4/3", zIndex: 20, boxShadow: "0 8px 28px -6px rgba(0,0,0,0.18)" }}
+            >
+              <img src={heroTile2} alt="Two friends laughing with confetti" loading="lazy" className="h-full w-full object-cover transition-transform duration-700 hover:scale-110" />
+            </div>
 
-            {/* Upload selfie pill button */}
+            {/* ── BOTTOM-LEFT tile ── */}
+            <div
+              className="hero-tile-2 absolute overflow-hidden rounded-2xl border-[4px] border-white bg-white"
+              style={{ bottom: "12%", left: "0%", width: "33%", aspectRatio: "4/3", zIndex: 20, boxShadow: "0 8px 28px -6px rgba(0,0,0,0.18)" }}
+            >
+              <img src={heroTile3} alt="Concert crowd with stage lights" loading="lazy" className="h-full w-full object-cover transition-transform duration-700 hover:scale-110" />
+            </div>
+
+            {/* ── BOTTOM-RIGHT tile (z-5 = behind stats card, left part still visible) ── */}
+            <div
+              className="hero-tile-3 absolute overflow-hidden rounded-2xl border-[4px] border-white bg-white"
+              style={{ bottom: "5%", right: "1%", width: "36%", aspectRatio: "4/3", zIndex: 5, boxShadow: "0 8px 28px -6px rgba(0,0,0,0.18)" }}
+            >
+              <img src={heroTile4} alt="Friends celebrating outdoors" loading="lazy" className="h-full w-full object-cover transition-transform duration-700 hover:scale-110" />
+            </div>
+
+            {/* ── Upload selfie pill (center-bottom of circle) ── */}
             <Link
               to="/find"
-              className="hero-upload-pill group absolute left-1/2 bottom-[6%] z-30 flex flex-col items-center gap-2"
+              className="hero-upload-pill group absolute left-1/2 flex flex-col items-center gap-1.5"
+              style={{ bottom: "20%", zIndex: 30 }}
             >
-              <div className="grid h-14 w-14 place-items-center rounded-full bg-gradient-hero text-white shadow-glow transition-transform group-hover:scale-105">
-                <UploadCloud className="h-6 w-6" />
+              <div className="grid h-12 w-12 place-items-center rounded-full bg-gradient-hero text-white shadow-glow transition-transform group-hover:scale-105">
+                <UploadCloud className="h-5 w-5" />
               </div>
-              <div className="rounded-full border border-primary/25 bg-card/90 px-5 py-2 text-center shadow-soft backdrop-blur">
-                <div className="text-sm font-bold text-primary">Upload Selfie</div>
-                <div className="text-[11px] text-muted-foreground">or drag &amp; drop</div>
+              <div className="rounded-full border border-primary/25 bg-white/90 px-4 py-1.5 text-center shadow-soft backdrop-blur">
+                <div className="text-xs font-bold text-primary">Upload Selfie</div>
+                <div className="text-[10px] text-muted-foreground">or drag &amp; drop</div>
               </div>
             </Link>
 
-            {/* Floating stats card */}
-            <div className="hero-stats absolute -bottom-4 -right-2 z-30 hidden w-60 rounded-2xl border border-border/50 bg-white/95 p-4 backdrop-blur-md sm:block" style={{ boxShadow: '0 12px 40px -10px rgba(0,0,0,0.12), 0 4px 16px -4px rgba(0,0,0,0.06)' }}>
-              <div className="flex items-center gap-3">
-                <div className="grid h-10 w-10 place-items-center rounded-lg bg-primary-soft text-primary">
-                  <ImageIcon className="h-4 w-4" />
-                </div>
-                <div className="flex-1">
-                  <div className="text-lg font-black text-foreground">118</div>
-                  <div className="text-xs text-muted-foreground">Photos Found</div>
-                </div>
-                <CheckCircle2 className="h-5 w-5 text-success" />
-              </div>
-              <div className="mt-3 flex items-center gap-3 border-t border-border/60 pt-3">
-                <div className="grid h-10 w-10 place-items-center rounded-lg bg-muted text-success">
-                  <Search className="h-4 w-4" />
-                </div>
-                <div className="flex-1">
-                  <div className="text-lg font-black text-foreground">
-                    388 <span className="text-sm font-semibold text-muted-foreground">Searches</span>
+            {/* ── Stats card (z-30 → on TOP of bottom-right tile) ── */}
+            <div
+              className="hero-stats absolute hidden sm:block"
+              style={{ bottom: "2%", right: "-1%", zIndex: 30, width: "52%" }}
+            >
+              <div
+                className="rounded-2xl border border-border/40 bg-white/95 p-3.5 backdrop-blur-md"
+                style={{ boxShadow: "0 8px 32px -8px rgba(0,0,0,0.13), 0 2px 8px -2px rgba(0,0,0,0.05)" }}
+              >
+                <div className="flex items-center gap-2.5">
+                  <div className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-primary-soft text-primary">
+                    <ImageIcon className="h-3.5 w-3.5" />
                   </div>
-                  <div className="text-xs text-muted-foreground">This month</div>
+                  <div className="flex-1">
+                    <div className="text-base font-black text-foreground">118</div>
+                    <div className="text-[11px] text-muted-foreground">Photos Found</div>
+                  </div>
+                  <CheckCircle2 className="h-4 w-4 shrink-0 text-success" />
+                </div>
+                <div className="mt-2.5 flex items-center gap-2.5 border-t border-border/50 pt-2.5">
+                  <div className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-muted text-success">
+                    <Search className="h-3.5 w-3.5" />
+                  </div>
+                  <div className="flex-1">
+                    <div className="text-base font-black text-foreground">388 <span className="text-xs font-semibold text-muted-foreground">Searches</span></div>
+                    <div className="text-[11px] text-muted-foreground">This month</div>
+                  </div>
                 </div>
               </div>
             </div>
+
           </div>
         </div>
       </section>
