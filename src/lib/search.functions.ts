@@ -124,10 +124,22 @@ export const listMySearches = createServerFn({ method: "GET" })
     const { supabase, userId } = context;
     const { data, error } = await supabase
       .from("search_sessions")
-      .select("id, event_id, match_count, created_at, events(name, share_code)")
+      .select("id, event_id, match_count, created_at, events(name, share_code), matches(id)")
       .eq("attendee_id", userId)
       .order("created_at", { ascending: false })
       .limit(50);
     if (error) throw new Error(error.message);
-    return data;
+
+    // Normalise: prefer live match count from the joined matches table
+    // (match_count column may be 0/null on old sessions run before the fix)
+    return (data ?? []).map((s) => {
+      const liveCount = Array.isArray((s as unknown as { matches: unknown[] }).matches)
+        ? (s as unknown as { matches: unknown[] }).matches.length
+        : 0;
+      return {
+        ...s,
+        // Use the larger of the two so we never show fewer matches than reality
+        match_count: Math.max(s.match_count ?? 0, liveCount),
+      };
+    });
   });

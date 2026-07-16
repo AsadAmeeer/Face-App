@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, redirect } from "@tanstack/react-router";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { Button } from "@/components/ui/button";
@@ -11,8 +11,18 @@ import heroTile1 from "@/assets/hero-tile-1.jpg";
 import heroTile2 from "@/assets/hero-tile-2.jpg";
 import heroTile3 from "@/assets/hero-tile-3.jpg";
 import heroTile4 from "@/assets/hero-tile-4.jpg";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/")({
+  // SSR off: session lives in localStorage, can only be checked client-side
+  ssr: false,
+  beforeLoad: async () => {
+    const { data } = await supabase.auth.getUser();
+    if (data.user) {
+      // Already logged in → go to attendee dashboard
+      throw redirect({ to: "/attendee" });
+    }
+  },
   component: Landing,
 });
 
