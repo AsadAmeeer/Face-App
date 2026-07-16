@@ -51,10 +51,10 @@
   --background: oklch(0.985 0.012 75);
   --foreground: oklch(0.22 0.04 200);
 
-  --card: oklch(1 0 0);
+  --card: oklch(1 0 0 / 0.88);
   --card-foreground: oklch(0.22 0.04 200);
 
-  --popover: oklch(1 0 0);
+  --popover: oklch(1 0 0 / 0.9);
   --popover-foreground: oklch(0.22 0.04 200);
 
   /* Coral / orange primary */
@@ -96,9 +96,9 @@
 .dark {
   --background: oklch(0.15 0.03 270);
   --foreground: oklch(0.98 0.003 270);
-  --card: oklch(0.2 0.04 270);
+  --card: oklch(0.2 0.04 270 / 0.88);
   --card-foreground: oklch(0.98 0.003 270);
-  --popover: oklch(0.2 0.04 270);
+  --popover: oklch(0.2 0.04 270 / 0.9);
   --popover-foreground: oklch(0.98 0.003 270);
   --primary: oklch(0.68 0.22 285);
   --primary-foreground: oklch(0.15 0.03 270);
@@ -120,7 +120,10 @@
   }
   html, body {
     font-family: var(--font-sans);
-    background-color: var(--color-background);
+    background-image: linear-gradient(color-mix(in oklab, var(--background) 86%, transparent), color-mix(in oklab, var(--background) 86%, transparent)), url('https://images.unsplash.com/photo-1511795409834-ef04bbd61622?q=80&w=2000&auto=format&fit=crop');
+    background-size: cover;
+    background-attachment: fixed;
+    background-position: center;
     color: var(--color-foreground);
     -webkit-font-smoothing: antialiased;
   }
@@ -157,5 +160,14 @@
 
 @utility page-warm {
   background-image: linear-gradient(180deg, oklch(0.985 0.02 60), oklch(0.97 0.035 45));
+}
+
+.bg-background {
+  background-color: transparent !important;
+}
+
+.bg-card {
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
 }
 
