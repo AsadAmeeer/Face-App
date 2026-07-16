@@ -32,24 +32,24 @@ function Landing() {
       <SiteHeader />
 
       {/* HERO */}
-      <section className="relative overflow-hidden">
+      <section className="relative overflow-hidden flex items-center" style={{ height: "calc(100vh - 64px)" }}>
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-primary-soft/40 via-transparent to-transparent" />
-        <div className="relative mx-auto grid max-w-7xl items-center gap-12 px-4 py-16 sm:px-6 lg:grid-cols-2 lg:py-24">
+        <div className="relative mx-auto grid w-full max-w-7xl items-center gap-8 px-4 py-6 sm:px-6 lg:grid-cols-2">
           {/* LEFT: copy */}
           <div>
             <div className="inline-flex items-center gap-2 rounded-full border border-primary/25 bg-card/80 px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-primary shadow-soft">
               <Sparkles className="h-3.5 w-3.5" /> AI Powered Photo Discovery
             </div>
-            <h1 className="mt-8 text-5xl font-black leading-[1.02] tracking-tight text-foreground sm:text-6xl lg:text-7xl">
+            <h1 className="mt-4 text-4xl font-black leading-[1.02] tracking-tight text-foreground sm:text-5xl lg:text-6xl">
               Find Your <br />
               Moments. <br />
               <span className="bg-gradient-hero bg-clip-text text-transparent">From Every Event.</span>
             </h1>
-            <p className="mt-6 max-w-lg text-lg text-muted-foreground">
+            <p className="mt-3 max-w-lg text-base text-muted-foreground">
               Upload a selfie and instantly discover all the photos where you appear.
               Powered by advanced AI face recognition.
             </p>
-            <div className="mt-8 flex flex-wrap gap-3">
+            <div className="mt-5 flex flex-wrap gap-3">
               <Button asChild size="lg" className="bg-primary text-primary-foreground shadow-soft hover:bg-primary/90">
                 <Link to="/find">
                   <UploadCloud className="mr-2 h-4 w-4" /> Find My Photos
@@ -61,7 +61,7 @@ function Landing() {
                 </Link>
               </Button>
             </div>
-            <div className="mt-10 flex flex-wrap gap-x-10 gap-y-4 text-sm">
+            <div className="mt-5 flex flex-wrap gap-x-8 gap-y-3 text-sm">
               <TrustPill icon={<ShieldCheck className="h-4 w-4" />} title="100% Secure" subtitle="Your data is private" tone="primary" />
               <TrustPill icon={<Zap className="h-4 w-4" />} title="Lightning Fast" subtitle="Results in seconds" tone="success" />
               <TrustPill icon={<Target className="h-4 w-4" />} title="Highly Accurate" subtitle="Advanced AI technology" tone="success" />
@@ -69,7 +69,7 @@ function Landing() {
           </div>
 
           {/* RIGHT: collage */}
-          <div className="relative mx-auto aspect-square w-full max-w-[600px]">
+          <div className="relative mx-auto aspect-square w-full max-w-[480px]">
             {/* Big center circular portrait with face-detection frame */}
             <div className="absolute left-1/2 top-1/2 aspect-square w-[62%] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-full border-[6px] border-white shadow-2xl ring-4 ring-primary/20">
               <img src={heroPortrait} alt="Smiling attendee portrait" className="h-full w-full object-cover" />
