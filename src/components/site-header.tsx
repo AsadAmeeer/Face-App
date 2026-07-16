@@ -1,4 +1,4 @@
-import { Link, useRouter } from "@tanstack/react-router";
+import { Link, useRouter, useRouterState } from "@tanstack/react-router";
 import { Camera, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
@@ -12,6 +12,8 @@ export function SiteHeader() {
   const router = useRouter();
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const isHome = pathname === "/";
 
 
   const signOut = async () => {
@@ -36,12 +38,10 @@ export function SiteHeader() {
 
         <div className="flex items-center gap-2">
           {user ? (
-            <>
-              <Button size="sm" variant="outline" onClick={signOut}>
-                <LogOut className="mr-1.5 h-3.5 w-3.5" /> Sign out
-              </Button>
-            </>
-          ) : (
+            <Button size="sm" variant="outline" onClick={signOut}>
+              <LogOut className="mr-1.5 h-3.5 w-3.5" /> Sign out
+            </Button>
+          ) : isHome ? (
             <>
               <Button asChild variant="outline" size="sm" className="hidden sm:inline-flex">
                 <Link to="/auth">Log in</Link>
@@ -50,7 +50,7 @@ export function SiteHeader() {
                 <Link to="/auth" search={{ mode: "signup" }}>Sign up</Link>
               </Button>
             </>
-          )}
+          ) : null}
         </div>
       </div>
     </header>
