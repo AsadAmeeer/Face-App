@@ -30,11 +30,10 @@ function Landing() {
   return (
     <div className="min-h-screen page-warm">
       <SiteHeader />
-
       {/* ═══════════════════════════════ HERO ═══════════════════════════════ */}
       <section
-        className="relative overflow-hidden flex items-center"
-        style={{ height: "calc(100vh - 64px)", background: "#FCFBF8" }}
+        className="relative overflow-hidden flex items-center min-h-[calc(100vh-64px)] py-12 lg:py-0"
+        style={{ background: "#FCFBF8" }}
       >
         {/* Background blobs */}
         <div className="pointer-events-none absolute inset-0" aria-hidden>
@@ -60,10 +59,10 @@ function Landing() {
           }} />
         </div>
 
-        <div className="relative mx-auto grid w-full max-w-7xl items-center gap-12 px-6 py-8 lg:grid-cols-2 lg:gap-8">
+        <div className="relative mx-auto grid w-full max-w-7xl items-center gap-12 px-6 lg:grid-cols-2 lg:gap-8">
 
           {/* ─────────── LEFT COPY ─────────── */}
-          <div className="flex flex-col" style={{ fontFamily: "'Space Grotesk', 'Plus Jakarta Sans', system-ui, sans-serif" }}>
+          <div className="flex flex-col items-center text-center lg:items-start lg:text-left order-2 lg:order-1 mt-6 lg:mt-0" style={{ fontFamily: "'Space Grotesk', 'Plus Jakarta Sans', system-ui, sans-serif" }}>
 
             {/* Badge */}
             <div className="hero-badge inline-flex w-fit items-center gap-2 rounded-full px-4 py-1.5 text-xs font-semibold tracking-wide"
@@ -79,7 +78,7 @@ function Landing() {
 
             {/* Heading */}
             <h1 className="hero-heading mt-5 font-black leading-[1.04] tracking-tight"
-              style={{ fontSize: "clamp(2.6rem, 5.5vw, 4rem)" }}>
+              style={{ fontSize: "clamp(2.2rem, 5.5vw, 4rem)" }}>
               <span style={{ color: "#0f172a" }}>Find Your<br />Moments.</span>
               <br />
               <span style={{
@@ -100,9 +99,9 @@ function Landing() {
             </p>
 
             {/* CTAs */}
-            <div className="hero-cta mt-7 flex flex-wrap gap-3">
+            <div className="hero-cta mt-7 flex flex-col sm:flex-row gap-3 w-full sm:w-auto sm:justify-center lg:justify-start">
               {/* Primary */}
-              <Link to="/find" className="group inline-flex items-center gap-2.5 rounded-xl px-6 py-3.5 text-sm font-bold text-white transition-all duration-300"
+              <Link to="/find" className="group inline-flex items-center justify-center gap-2.5 rounded-xl px-6 py-3.5 text-sm font-bold text-white transition-all duration-300 w-full sm:w-auto"
                 style={{
                   background: "linear-gradient(135deg, #f97316 0%, #ef4444 100%)",
                   boxShadow: "0 4px 20px rgba(249,115,22,0.35), 0 1px 4px rgba(0,0,0,0.08)",
@@ -111,7 +110,7 @@ function Landing() {
                 Find My Photos
               </Link>
               {/* Secondary */}
-              <Link to="/auth" search={{ mode: "signup" }} className="group inline-flex items-center gap-2.5 rounded-xl px-6 py-3.5 text-sm font-semibold transition-all duration-300"
+              <Link to="/auth" search={{ mode: "signup" }} className="group inline-flex items-center justify-center gap-2.5 rounded-xl px-6 py-3.5 text-sm font-semibold transition-all duration-300 w-full sm:w-auto"
                 style={{
                   background: "#ffffff",
                   border: "1.5px solid rgba(15,23,42,0.12)",
@@ -119,12 +118,12 @@ function Landing() {
                   boxShadow: "0 2px 8px rgba(0,0,0,0.07)",
                 }}>
                 <Calendar className="h-4 w-4 text-slate-500 transition-transform group-hover:-translate-y-0.5" />
-                SignUp For Organizing an Event
+                Sign Up as Organizer
               </Link>
             </div>
 
             {/* Trust pills */}
-            <div className="hero-trust mt-8 flex flex-wrap gap-x-6 gap-y-4">
+            <div className="hero-trust mt-8 flex flex-wrap justify-center lg:justify-start gap-x-6 gap-y-4">
               {[
                 { icon: <ShieldCheck className="h-4 w-4" />, title: "100% Secure", sub: "Your data stays private", color: "#f97316" },
                 { icon: <Zap className="h-4 w-4" />, title: "Lightning Fast", sub: "Results in seconds", color: "#14b8a6" },
@@ -144,7 +143,7 @@ function Landing() {
           </div>
 
           {/* ─────────── RIGHT COLLAGE ─────────── */}
-          <div className="relative mx-auto w-full" style={{ maxWidth: "520px", aspectRatio: "1/1" }}>
+          <div className="relative mx-auto w-full max-w-[340px] xs:max-w-[400px] sm:max-w-[480px] lg:max-w-[520px] aspect-square order-1 lg:order-2">
 
             {/* Coral glow behind portrait */}
             <div aria-hidden style={{
@@ -262,15 +261,15 @@ function Landing() {
                   backdropFilter: "blur(12px)",
                   boxShadow: "0 4px 16px rgba(0,0,0,0.08)",
                 }}>
-                <div className="text-xs font-bold" style={{ color: "#f97316" }}>Upload Selfie</div>
-                <div className="text-[10px]" style={{ color: "#94a3b8" }}>or drag &amp; drop</div>
+                <div className="text-xs font-bold whitespace-nowrap" style={{ color: "#f97316" }}>Upload Selfie</div>
+                <div className="text-[10px] whitespace-nowrap" style={{ color: "#94a3b8" }}>or drag &amp; drop</div>
               </div>
             </Link>
-
 
           </div>
         </div>
       </section>
+
 
       {/* WHY */}
       <section id="features" className="bg-primary-soft/50 py-20">
