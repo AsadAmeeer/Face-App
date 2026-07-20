@@ -31,159 +31,242 @@ function Landing() {
     <div className="min-h-screen page-warm">
       <SiteHeader />
 
-      {/* HERO */}
-      <section className="relative overflow-hidden flex items-center" style={{ height: "calc(100vh - 64px)" }}>
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-primary-soft/40 via-transparent to-transparent" />
-        <div className="relative mx-auto grid w-full max-w-7xl items-center gap-8 px-4 py-6 sm:px-6 lg:grid-cols-2">
-          {/* LEFT: copy */}
-          <div>
-            <div className="hero-badge inline-flex items-center gap-2 rounded-full border border-primary/25 bg-card/80 px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-primary shadow-soft">
-              <Sparkles className="h-3.5 w-3.5" /> AI Powered Photo Discovery
+      {/* ═══════════════════════════════ HERO ═══════════════════════════════ */}
+      <section
+        className="relative overflow-hidden flex items-center"
+        style={{ height: "calc(100vh - 64px)", background: "#FCFBF8" }}
+      >
+        {/* Background blobs */}
+        <div className="pointer-events-none absolute inset-0" aria-hidden>
+          {/* Orange blob top-right */}
+          <div style={{
+            position: "absolute", top: "-8%", right: "-6%",
+            width: "480px", height: "480px", borderRadius: "50%",
+            background: "radial-gradient(circle, rgba(251,146,60,0.18) 0%, rgba(251,146,60,0.04) 55%, transparent 75%)",
+            filter: "blur(40px)",
+          }} />
+          {/* Teal blob bottom-left */}
+          <div style={{
+            position: "absolute", bottom: "-10%", left: "-8%",
+            width: "420px", height: "420px", borderRadius: "50%",
+            background: "radial-gradient(circle, rgba(20,184,166,0.13) 0%, rgba(56,189,248,0.06) 55%, transparent 75%)",
+            filter: "blur(50px)",
+          }} />
+          {/* Subtle grid lines */}
+          <div style={{
+            position: "absolute", inset: 0,
+            backgroundImage: "linear-gradient(rgba(0,0,0,0.035) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.035) 1px, transparent 1px)",
+            backgroundSize: "72px 72px",
+          }} />
+        </div>
+
+        <div className="relative mx-auto grid w-full max-w-7xl items-center gap-12 px-6 py-8 lg:grid-cols-2 lg:gap-8">
+
+          {/* ─────────── LEFT COPY ─────────── */}
+          <div className="flex flex-col" style={{ fontFamily: "'Space Grotesk', 'Plus Jakarta Sans', system-ui, sans-serif" }}>
+
+            {/* Badge */}
+            <div className="hero-badge inline-flex w-fit items-center gap-2 rounded-full px-4 py-1.5 text-xs font-semibold tracking-wide"
+              style={{
+                background: "rgba(251,146,60,0.09)",
+                border: "1px solid rgba(251,146,60,0.25)",
+                color: "#ea580c",
+                backdropFilter: "blur(8px)",
+              }}>
+              <Sparkles className="h-3.5 w-3.5" />
+              AI Powered Photo Discovery
             </div>
-            <h1 className="hero-heading mt-4 text-4xl font-black leading-[1.02] tracking-tight text-foreground sm:text-5xl lg:text-6xl">
-              Find Your <br />
-              Moments. <br />
-              <span className="bg-gradient-hero bg-clip-text text-transparent">From Every Event.</span>
+
+            {/* Heading */}
+            <h1 className="hero-heading mt-5 font-black leading-[1.04] tracking-tight"
+              style={{ fontSize: "clamp(2.6rem, 5.5vw, 4rem)" }}>
+              <span style={{ color: "#0f172a" }}>Find Your<br />Moments.</span>
+              <br />
+              <span style={{
+                background: "linear-gradient(95deg, #f97316 0%, #fb923c 20%, #ef4444 45%, #14b8a6 75%, #38bdf8 100%)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                backgroundClip: "text",
+              }}>
+                From Every Event.
+              </span>
             </h1>
-            <p className="hero-sub mt-3 max-w-lg text-base text-muted-foreground">
-              Upload a selfie and instantly discover all the photos where you appear.
-              Powered by advanced AI face recognition.
+
+            {/* Description */}
+            <p className="hero-sub mt-4 max-w-[480px] leading-relaxed"
+              style={{ fontSize: "1.0625rem", color: "#64748b" }}>
+              Upload a selfie and instantly discover every photo you're in using
+              advanced AI facial recognition technology. Secure, private, and lightning-fast.
             </p>
-            <div className="hero-cta mt-5 flex flex-wrap gap-3">
-              <Button asChild size="lg" className="bg-primary text-primary-foreground shadow-soft hover:bg-primary/90">
-                <Link to="/find">
-                  <UploadCloud className="mr-2 h-4 w-4" /> Find My Photos
-                </Link>
-              </Button>
-              <Button asChild size="lg" variant="outline" className="border-primary/30 bg-card text-primary hover:bg-primary-soft">
-                <Link to="/auth" search={{ mode: "signup" }}>
-                  <Calendar className="mr-2 h-4 w-4" /> SignUp For Organize an Event
-                </Link>
-              </Button>
+
+            {/* CTAs */}
+            <div className="hero-cta mt-7 flex flex-wrap gap-3">
+              {/* Primary */}
+              <Link to="/find" className="group inline-flex items-center gap-2.5 rounded-xl px-6 py-3.5 text-sm font-bold text-white transition-all duration-300"
+                style={{
+                  background: "linear-gradient(135deg, #f97316 0%, #ef4444 100%)",
+                  boxShadow: "0 4px 20px rgba(249,115,22,0.35), 0 1px 4px rgba(0,0,0,0.08)",
+                }}>
+                <UploadCloud className="h-4 w-4 transition-transform group-hover:-translate-y-0.5" />
+                Find My Photos
+              </Link>
+              {/* Secondary */}
+              <Link to="/auth" search={{ mode: "signup" }} className="group inline-flex items-center gap-2.5 rounded-xl px-6 py-3.5 text-sm font-semibold transition-all duration-300"
+                style={{
+                  background: "#ffffff",
+                  border: "1.5px solid rgba(15,23,42,0.12)",
+                  color: "#0f172a",
+                  boxShadow: "0 2px 8px rgba(0,0,0,0.07)",
+                }}>
+                <Calendar className="h-4 w-4 text-slate-500 transition-transform group-hover:-translate-y-0.5" />
+                SignUp For Organizing an Event
+              </Link>
             </div>
-            <div className="hero-trust mt-5 flex flex-wrap gap-x-8 gap-y-3 text-sm">
-              <TrustPill icon={<ShieldCheck className="h-4 w-4" />} title="100% Secure" subtitle="Your data is private" tone="primary" />
-              <TrustPill icon={<Zap className="h-4 w-4" />} title="Lightning Fast" subtitle="Results in seconds" tone="success" />
-              <TrustPill icon={<Target className="h-4 w-4" />} title="Highly Accurate" subtitle="Advanced AI technology" tone="success" />
+
+            {/* Trust pills */}
+            <div className="hero-trust mt-8 flex flex-wrap gap-x-6 gap-y-4">
+              {[
+                { icon: <ShieldCheck className="h-4 w-4" />, title: "100% Secure", sub: "Your data stays private", color: "#f97316" },
+                { icon: <Zap className="h-4 w-4" />, title: "Lightning Fast", sub: "Results in seconds", color: "#14b8a6" },
+                { icon: <Target className="h-4 w-4" />, title: "Highly Accurate", sub: "AI-powered recognition", color: "#38bdf8" },
+              ].map((item) => (
+                <div key={item.title} className="flex items-center gap-2.5">
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg" style={{ background: `${item.color}15`, color: item.color }}>
+                    {item.icon}
+                  </div>
+                  <div>
+                    <div className="text-sm font-semibold" style={{ color: "#0f172a" }}>{item.title}</div>
+                    <div className="text-xs" style={{ color: "#94a3b8" }}>{item.sub}</div>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
 
-          {/* RIGHT: collage */}
-          <div className="relative mx-auto aspect-square w-full max-w-[500px]">
+          {/* ─────────── RIGHT COLLAGE ─────────── */}
+          <div className="relative mx-auto w-full" style={{ maxWidth: "520px", aspectRatio: "1/1" }}>
 
-            {/* ── Warm coral glow BEHIND the circle ── */}
+            {/* Coral glow behind portrait */}
+            <div aria-hidden style={{
+              position: "absolute", left: "50%", top: "50%",
+              transform: "translate(-50%, -50%)",
+              width: "68%", height: "68%", borderRadius: "50%",
+              background: "radial-gradient(circle, rgba(251,146,60,0.30) 0%, rgba(239,68,68,0.12) 45%, transparent 70%)",
+              filter: "blur(24px)", zIndex: 1,
+            }} />
+            {/* Teal glow */}
+            <div aria-hidden style={{
+              position: "absolute", left: "60%", top: "60%",
+              transform: "translate(-50%, -50%)",
+              width: "42%", height: "42%", borderRadius: "50%",
+              background: "radial-gradient(circle, rgba(20,184,166,0.20) 0%, transparent 70%)",
+              filter: "blur(20px)", zIndex: 1,
+            }} />
+
+            {/* ── Center portrait circle ── */}
             <div
-              className="pointer-events-none absolute"
+              className="hero-portrait absolute overflow-hidden rounded-full"
               style={{
                 left: "50%", top: "50%",
                 transform: "translate(-50%, -50%)",
-                width: "72%", height: "72%",
-                borderRadius: "50%",
-                background: "radial-gradient(circle, oklch(0.85 0.12 50 / 0.55) 0%, oklch(0.90 0.08 45 / 0.25) 45%, transparent 70%)",
-                filter: "blur(18px)",
-                zIndex: 1,
-              }}
-            />
-
-            {/* ── Big center circular portrait ── */}
-            <div
-              className="hero-portrait absolute overflow-hidden rounded-full border-[6px] border-white"
-              style={{
-                left: "50%", top: "50%",
-                transform: "translate(-50%, -50%)",
-                width: "64%",
-                aspectRatio: "1/1",
+                width: "62%", aspectRatio: "1/1",
                 zIndex: 10,
-                boxShadow: "0 4px 32px 0 oklch(0.68 0.19 40 / 0.20), 0 1px 8px 0 rgba(0,0,0,0.10)",
+                border: "6px solid rgba(255,255,255,0.95)",
+                boxShadow: "0 8px 48px rgba(249,115,22,0.22), 0 2px 16px rgba(0,0,0,0.10), 0 0 0 1px rgba(249,115,22,0.08)",
               }}
             >
               <img src={heroPortrait} alt="Smiling attendee portrait" className="h-full w-full object-cover" />
-              {/* Face detection box */}
-              <div className="hero-scanbox absolute left-1/2 top-1/2 h-[42%] w-[42%] -translate-x-1/2 -translate-y-[45%] rounded-md border-[3px] border-primary">
-                <span className="absolute -top-[3px] -left-[3px] h-3 w-3 border-t-[3px] border-l-[3px] border-primary" />
-                <span className="absolute -top-[3px] -right-[3px] h-3 w-3 border-t-[3px] border-r-[3px] border-primary" />
-                <span className="absolute -bottom-[3px] -left-[3px] h-3 w-3 border-b-[3px] border-l-[3px] border-primary" />
-                <span className="absolute -bottom-[3px] -right-[3px] h-3 w-3 border-b-[3px] border-r-[3px] border-primary" />
+              {/* AI scan brackets */}
+              <div className="hero-scanbox absolute" style={{
+                left: "50%", top: "50%",
+                transform: "translate(-50%, -48%)",
+                width: "42%", height: "42%",
+                borderRadius: "6px",
+                border: "2.5px solid rgba(249,115,22,0.85)",
+              }}>
+                {/* Corner brackets */}
+                {[
+                  { top: "-3px", left: "-3px", borderTop: "3px solid #f97316", borderLeft: "3px solid #f97316" },
+                  { top: "-3px", right: "-3px", borderTop: "3px solid #f97316", borderRight: "3px solid #f97316" },
+                  { bottom: "-3px", left: "-3px", borderBottom: "3px solid #f97316", borderLeft: "3px solid #f97316" },
+                  { bottom: "-3px", right: "-3px", borderBottom: "3px solid #f97316", borderRight: "3px solid #f97316" },
+                ].map((s, i) => (
+                  <span key={i} style={{ position: "absolute", width: 12, height: 12, ...s }} />
+                ))}
               </div>
             </div>
-  
+
             {/* ── TOP-LEFT tile ── */}
-            <div
-              className="hero-tile-0 absolute overflow-hidden rounded-2xl border-[4px] border-white bg-white"
-              style={{ top: "3%", left: "2%", width: "35%", aspectRatio: "4/3", zIndex: 20, boxShadow: "0 8px 28px -6px rgba(0,0,0,0.18)" }}
-            >
-              <img src={heroTile1} alt="Group of friends at an evening party" loading="lazy" className="h-full w-full object-cover transition-transform duration-700 hover:scale-110" />
+            <div className="hero-tile-0 absolute overflow-hidden rounded-2xl"
+              style={{
+                top: "3%", left: "0%", width: "36%", aspectRatio: "4/3",
+                zIndex: 20,
+                border: "4px solid rgba(255,255,255,0.95)",
+                boxShadow: "0 12px 32px -6px rgba(0,0,0,0.20), 0 2px 8px rgba(0,0,0,0.06)",
+                transform: "rotate(-6deg)",
+              }}>
+              <img src={heroTile1} alt="Group of friends at an evening party" loading="lazy" className="h-full w-full object-cover transition-transform duration-500 hover:scale-105" />
             </div>
 
             {/* ── TOP-RIGHT tile ── */}
-            <div
-              className="hero-tile-1 absolute overflow-hidden rounded-2xl border-[4px] border-white bg-white"
-              style={{ top: "2%", right: "0%", width: "33%", aspectRatio: "4/3", zIndex: 20, boxShadow: "0 8px 28px -6px rgba(0,0,0,0.18)" }}
-            >
-              <img src={heroTile2} alt="Two friends laughing with confetti" loading="lazy" className="h-full w-full object-cover transition-transform duration-700 hover:scale-110" />
+            <div className="hero-tile-1 absolute overflow-hidden rounded-2xl"
+              style={{
+                top: "3%", right: "0%", width: "34%", aspectRatio: "4/3",
+                zIndex: 20,
+                border: "4px solid rgba(255,255,255,0.95)",
+                boxShadow: "0 12px 32px -6px rgba(0,0,0,0.20), 0 2px 8px rgba(0,0,0,0.06)",
+                transform: "rotate(6deg)",
+              }}>
+              <img src={heroTile2} alt="Two friends laughing with confetti" loading="lazy" className="h-full w-full object-cover transition-transform duration-500 hover:scale-105" />
             </div>
 
             {/* ── BOTTOM-LEFT tile ── */}
-            <div
-              className="hero-tile-2 absolute overflow-hidden rounded-2xl border-[4px] border-white bg-white"
-              style={{ bottom: "12%", left: "0%", width: "33%", aspectRatio: "4/3", zIndex: 20, boxShadow: "0 8px 28px -6px rgba(0,0,0,0.18)" }}
-            >
-              <img src={heroTile3} alt="Concert crowd with stage lights" loading="lazy" className="h-full w-full object-cover transition-transform duration-700 hover:scale-110" />
+            <div className="hero-tile-2 absolute overflow-hidden rounded-2xl"
+              style={{
+                bottom: "10%", left: "0%", width: "33%", aspectRatio: "4/3",
+                zIndex: 20,
+                border: "4px solid rgba(255,255,255,0.95)",
+                boxShadow: "0 12px 32px -6px rgba(0,0,0,0.20), 0 2px 8px rgba(0,0,0,0.06)",
+                transform: "rotate(5deg)",
+              }}>
+              <img src={heroTile3} alt="Concert crowd with stage lights" loading="lazy" className="h-full w-full object-cover transition-transform duration-500 hover:scale-105" />
             </div>
 
-            {/* ── BOTTOM-RIGHT tile (z-5 = behind stats card, left part still visible) ── */}
-            <div
-              className="hero-tile-3 absolute overflow-hidden rounded-2xl border-[4px] border-white bg-white"
-              style={{ bottom: "5%", right: "1%", width: "36%", aspectRatio: "4/3", zIndex: 5, boxShadow: "0 8px 28px -6px rgba(0,0,0,0.18)" }}
-            >
-              <img src={heroTile4} alt="Friends celebrating outdoors" loading="lazy" className="h-full w-full object-cover transition-transform duration-700 hover:scale-110" />
+            {/* ── BOTTOM-RIGHT tile (behind stats card) ── */}
+            <div className="hero-tile-3 absolute overflow-hidden rounded-2xl"
+              style={{
+                bottom: "4%", right: "1%", width: "36%", aspectRatio: "4/3",
+                zIndex: 5,
+                border: "4px solid rgba(255,255,255,0.95)",
+                boxShadow: "0 12px 32px -6px rgba(0,0,0,0.20), 0 2px 8px rgba(0,0,0,0.06)",
+                transform: "rotate(-5deg)",
+              }}>
+              <img src={heroTile4} alt="Friends celebrating outdoors" loading="lazy" className="h-full w-full object-cover transition-transform duration-500 hover:scale-105" />
             </div>
 
-            {/* ── Upload selfie pill (center-bottom of circle) ── */}
-            <Link
-              to="/find"
-              className="hero-upload-pill group absolute left-1/2 flex flex-col items-center gap-1.5"
-              style={{ bottom: "20%", zIndex: 30 }}
-            >
-              <div className="grid h-12 w-12 place-items-center rounded-full bg-gradient-hero text-white shadow-glow transition-transform group-hover:scale-105">
+            {/* ── Upload Selfie pill ── */}
+            <Link to="/find"
+              className="hero-upload-pill group absolute flex flex-col items-center gap-1.5"
+              style={{ left: "50%", bottom: "18%", zIndex: 30, transform: "translateX(-50%)" }}>
+              <div className="flex h-11 w-11 items-center justify-center rounded-full text-white transition-transform duration-300 group-hover:scale-110 group-hover:-translate-y-1"
+                style={{
+                  background: "linear-gradient(135deg, #f97316, #ef4444)",
+                  boxShadow: "0 6px 20px rgba(249,115,22,0.40)",
+                }}>
                 <UploadCloud className="h-5 w-5" />
               </div>
-              <div className="rounded-full border border-primary/25 bg-white/90 px-4 py-1.5 text-center shadow-soft backdrop-blur">
-                <div className="text-xs font-bold text-primary">Upload Selfie</div>
-                <div className="text-[10px] text-muted-foreground">or drag &amp; drop</div>
+              <div className="rounded-full px-4 py-1.5 text-center"
+                style={{
+                  background: "rgba(255,255,255,0.92)",
+                  border: "1px solid rgba(249,115,22,0.20)",
+                  backdropFilter: "blur(12px)",
+                  boxShadow: "0 4px 16px rgba(0,0,0,0.08)",
+                }}>
+                <div className="text-xs font-bold" style={{ color: "#f97316" }}>Upload Selfie</div>
+                <div className="text-[10px]" style={{ color: "#94a3b8" }}>or drag &amp; drop</div>
               </div>
             </Link>
 
-            {/* ── Stats card (z-30 → on TOP of bottom-right tile) ── */}
-            <div
-              className="hero-stats absolute hidden sm:block"
-              style={{ bottom: "2%", right: "-1%", zIndex: 30, width: "52%" }}
-            >
-              <div
-                className="rounded-2xl border border-border/40 bg-white/95 p-3.5 backdrop-blur-md"
-                style={{ boxShadow: "0 8px 32px -8px rgba(0,0,0,0.13), 0 2px 8px -2px rgba(0,0,0,0.05)" }}
-              >
-                <div className="flex items-center gap-2.5">
-                  <div className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-primary-soft text-primary">
-                    <ImageIcon className="h-3.5 w-3.5" />
-                  </div>
-                  <div className="flex-1">
-                    <div className="text-base font-black text-foreground">118</div>
-                    <div className="text-[11px] text-muted-foreground">Photos Found</div>
-                  </div>
-                  <CheckCircle2 className="h-4 w-4 shrink-0 text-success" />
-                </div>
-                <div className="mt-2.5 flex items-center gap-2.5 border-t border-border/50 pt-2.5">
-                  <div className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-muted text-success">
-                    <Search className="h-3.5 w-3.5" />
-                  </div>
-                  <div className="flex-1">
-                    <div className="text-base font-black text-foreground">388 <span className="text-xs font-semibold text-muted-foreground">Searches</span></div>
-                    <div className="text-[11px] text-muted-foreground">This month</div>
-                  </div>
-                </div>
-              </div>
-            </div>
 
           </div>
         </div>

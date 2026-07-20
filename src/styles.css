@@ -246,3 +246,74 @@
 .scan-line {
   animation: scan-sweep 1.8s ease-in-out infinite;
 }
+
+/* ═══════════════════════════════════════
+   BUTTON HOVER ANIMATION — shimmer flicker
+   Matches EventFace coral/orange brand
+═══════════════════════════════════════ */
+
+@keyframes btn-shimmer {
+  0%   { transform: translateX(-120%) skewX(-20deg); opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 1; }
+  100% { transform: translateX(250%) skewX(-20deg); opacity: 0; }
+}
+
+@keyframes btn-flicker-glow {
+  0%   { box-shadow: 0 0 0px 0px oklch(0.72 0.20 45 / 0); }
+  20%  { box-shadow: 0 0 16px 4px oklch(0.72 0.20 45 / 0.55); }
+  50%  { box-shadow: 0 0 24px 7px oklch(0.72 0.20 45 / 0.30); }
+  80%  { box-shadow: 0 0 12px 3px oklch(0.72 0.20 45 / 0.50); }
+  100% { box-shadow: 0 0 0px 0px oklch(0.72 0.20 45 / 0); }
+}
+
+/* ── Base: every button-like element ── */
+.btn-shimmer,
+button:not([data-no-shimmer]),
+a[role="button"],
+[role="button"] {
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+/* ── The sweeping light strip (pseudo-element) ── */
+.btn-shimmer::after,
+button:not([data-no-shimmer])::after,
+a[role="button"]::after,
+[role="button"]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  width: 45%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background: linear-gradient(
+    108deg,
+    transparent 20%,
+    oklch(1 0 0 / 0.28) 50%,
+    transparent 80%
+  );
+  pointer-events: none;
+  opacity: 0;
+  transform: translateX(-120%) skewX(-20deg);
+  z-index: 20;
+  border-radius: inherit;
+  transition: none;
+}
+
+/* ── Trigger shimmer on hover ── */
+.btn-shimmer:hover::after,
+button:not([data-no-shimmer]):hover::after,
+a[role="button"]:hover::after,
+[role="button"]:hover::after {
+  animation: btn-shimmer 0.52s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* ── Orange glow flicker on hover (all btn-shimmer) ── */
+.btn-shimmer:hover,
+button:not([data-no-shimmer]):hover,
+a[role="button"]:hover,
+[role="button"]:hover {
+  animation: btn-flicker-glow 0.55s ease-out;
+}

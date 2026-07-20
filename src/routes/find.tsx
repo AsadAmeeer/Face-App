@@ -58,34 +58,107 @@ function ScanOverlay() {
 }
 
 /* ─── Animated scanning panel ─── */
-function ScanningPanel({ total, selfiePreview }: { total: number; selfiePreview: string | null }) {
+function ScanningPanel({
+  total,
+  selfiePreview,
+  results,
+  onComplete,
+}: {
+  total: number;
+  selfiePreview: string | null;
+  results: { matches: Match[]; total_scanned: number } | null;
+  onComplete: () => void;
+}) {
   const [scanned, setScanned] = useState(0);
   const [matched, setMatched] = useState(0);
+  const [isDoneTransitioning, setIsDoneTransitioning] = useState(false);
 
-  /* Simulate scanning counter — runs until the real result arrives */
+  const effectiveTotal = Math.max(total, 12);
+
+  /* Dynamically drive counters to approach 92% asymptotically, and 100% when results arrive */
   useEffect(() => {
-    if (total === 0) return;
-    let current = 0;
-    /* Spread scans across ~80% of a 45-second budget; slows near the end */
-    const intervalMs = Math.max(120, Math.round((45_000 * 0.8) / total));
-    const id = setInterval(() => {
-      current++;
-      setScanned((p) => Math.min(p + 1, total));
-      /* Fake ~25% match rate for demo feel */
-      if (Math.random() < 0.25) setMatched((p) => p + 1);
-      if (current >= total) clearInterval(id);
-    }, intervalMs);
-    return () => clearInterval(id);
-  }, [total]);
+    let timerId: NodeJS.Timeout;
 
-  const pct = total > 0 ? Math.round((scanned / total) * 100) : 0;
+    const tick = () => {
+      if (!results) {
+        // Approach 92% of the photo count asymptotically
+        setScanned((curr) => {
+          const target = Math.floor(effectiveTotal * 0.92);
+          if (curr >= target) return curr;
+          const diff = target - curr;
+          const step = Math.max(1, Math.ceil(diff * 0.08));
+          const nextVal = curr + step;
+
+          // Mock matches during scan to make it look active (approx 3% of scanned)
+          setMatched((m) => {
+            const mockTarget = Math.max(0, Math.floor(nextVal * 0.03));
+            return mockTarget > m ? mockTarget : m;
+          });
+
+          return nextVal;
+        });
+      } else {
+        // Real results are here!
+        const actualScanned = results.total_scanned || effectiveTotal;
+        const actualMatched = results.matches.length;
+
+        let scannedFinished = false;
+        let matchedFinished = false;
+
+        setScanned((curr) => {
+          if (curr >= actualScanned) {
+            scannedFinished = true;
+            return actualScanned;
+          }
+          const diff = actualScanned - curr;
+          const step = Math.max(1, Math.ceil(diff * 0.25)); // Drive faster to actual results
+          const next = curr + step;
+          if (next >= actualScanned) scannedFinished = true;
+          return next;
+        });
+
+        setMatched((curr) => {
+          if (curr === actualMatched) {
+            matchedFinished = true;
+            return actualMatched;
+          }
+          const diff = actualMatched - curr;
+          const step = diff > 0 ? Math.max(1, Math.ceil(diff * 0.25)) : Math.min(-1, Math.floor(diff * 0.25));
+          const next = curr + step;
+          if (next === actualMatched) matchedFinished = true;
+          return next;
+        });
+
+        // Trigger onComplete once everything matches and transition completes
+        if (scannedFinished && matchedFinished) {
+          clearInterval(timerId);
+          setIsDoneTransitioning(true);
+        }
+      }
+    };
+
+    timerId = setInterval(tick, 100);
+    return () => clearInterval(timerId);
+  }, [results, effectiveTotal]);
+
+  // Complete callback once done transition has been seen for a short delay
+  useEffect(() => {
+    if (isDoneTransitioning) {
+      const delay = setTimeout(() => {
+        onComplete();
+      }, 700);
+      return () => clearTimeout(delay);
+    }
+  }, [isDoneTransitioning, onComplete]);
+
+  const pct = Math.round((scanned / (results?.total_scanned || effectiveTotal)) * 100);
 
   return (
     <div className="flex flex-col items-center gap-6 py-4">
       {/* Top label */}
       <div className="flex items-center gap-2 text-sm font-semibold text-primary animate-pulse">
         <ScanFace className="h-4 w-4" />
-        AI Face Scanning in Progress…
+        {results ? "Matching completed! Presenting photos…" : "AI Face Scanning in Progress…"}
       </div>
 
       {/* Ring + selfie preview */}
@@ -96,7 +169,7 @@ function ScanningPanel({ total, selfiePreview }: { total: number; selfiePreview:
           {selfiePreview ? (
             <>
               <img src={selfiePreview} alt="Your selfie" className="h-full w-full object-cover" />
-              <ScanOverlay />
+              {!results && <ScanOverlay />}
             </>
           ) : (
             <ScanFace className="h-10 w-10 text-primary animate-pulse" />
@@ -115,7 +188,7 @@ function ScanningPanel({ total, selfiePreview }: { total: number; selfiePreview:
             {scanned.toLocaleString()}
           </div>
           <div className="text-xs text-muted-foreground">
-            of {total > 0 ? total.toLocaleString() : "—"} scanned
+            of {(results?.total_scanned || total).toLocaleString()} scanned
           </div>
         </div>
         <div className="w-px bg-border" />
@@ -141,8 +214,8 @@ function ScanningPanel({ total, selfiePreview }: { total: number; selfiePreview:
         {[
           { label: "Uploading selfie", done: true },
           { label: "Extracting face embeddings", done: scanned > 0 },
-          { label: `Comparing against ${total > 0 ? total : "…"} event photos`, done: false },
-          { label: "Ranking matches by confidence", done: false },
+          { label: `Comparing against ${results?.total_scanned || total} event photos`, done: scanned > 0.5 * effectiveTotal },
+          { label: "Ranking matches by confidence", done: !!results && isDoneTransitioning },
         ].map((s, i) => (
           <div key={i} className="flex items-center gap-3 text-sm">
             {s.done ? (
@@ -154,7 +227,7 @@ function ScanningPanel({ total, selfiePreview }: { total: number; selfiePreview:
               {s.label}
             </span>
             {i === 2 && scanned > 0 && (
-              <span className="ml-auto font-mono text-xs text-primary">{scanned}/{total}</span>
+              <span className="ml-auto font-mono text-xs text-primary">{scanned}/{results?.total_scanned || total}</span>
             )}
           </div>
         ))}
@@ -169,7 +242,7 @@ function ScanningPanel({ total, selfiePreview }: { total: number; selfiePreview:
 
 /* ═══════════════════════════════════════
    Main page
-═══════════════════════════════════════ */
+ ═══════════════════════════════════════ */
 function FindPage() {
   const search = Route.useSearch();
   const { user, loading: authLoading } = useAuth();
@@ -211,7 +284,8 @@ function FindPage() {
     if (!eventInfo) return;
     if (!file.type.startsWith("image/")) { toast.error("Please upload an image"); return; }
 
-    /* Show selfie preview + scanning step immediately */
+    /* Clear previous results and show selfie preview + scanning step immediately */
+    setResults(null);
     const previewUrl = URL.createObjectURL(file);
     setSelfiePreview(previewUrl);
     setStep("scanning");
@@ -223,7 +297,7 @@ function FindPage() {
       if (!put.ok) throw new Error("Selfie upload failed");
       const res = await runFn({ data: { share_code: eventInfo.share_code, selfie_path: path } });
       setResults({ matches: res.matches, total_scanned: res.total_scanned });
-      setStep("results");
+      // Transition to results step is handled by ScanningPanel's onComplete callback!
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Search failed");
       setStep("upload");
@@ -231,6 +305,7 @@ function FindPage() {
       URL.revokeObjectURL(previewUrl);
     }
   };
+
 
   const downloadAll = async () => {
     if (!results?.matches.length) return;
@@ -322,7 +397,7 @@ function FindPage() {
             <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary-soft px-3 py-1 text-xs font-semibold uppercase tracking-wider text-primary">
               <Zap className="h-3.5 w-3.5 animate-pulse" /> Scanning · {eventInfo.name}
             </div>
-            <ScanningPanel total={eventInfo.photo_count} selfiePreview={selfiePreview} />
+            <ScanningPanel total={eventInfo.photo_count} selfiePreview={selfiePreview} results={results} onComplete={() => setStep("results")} />
           </div>
         )}
 
